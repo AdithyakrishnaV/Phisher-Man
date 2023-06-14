@@ -4,6 +4,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from enum import Enum
 from fastapi import Query
+import psycopg2
+from psycopg2 import Error
 
 app = FastAPI()
 
@@ -42,7 +44,33 @@ async def check_url(input: PhisherInput, response_model=PhisherRespose):
 @app.post("/add_url")
 async def add_url(input: ReportInput, type: URLType = Query(..., description="Type of URL: 'fake' or 'real'")):
     url: str = input.reportUrl
-    filename = "fake.txt" if type == URLType.FAKE else "real.txt"
-    with open(filename, "a") as file:
-        file.write(url + "\n")
-    return {"message": "URL added successfully"}
+
+    try:
+        # Establish connection to PostgreSQL
+        connection = psycopg2.connect(
+            user="postgres",
+            password="<password>",
+            host="127.0.0.1",
+            port="5432",
+            database="postgres"
+        )
+
+        cursor = connection.cursor()
+
+        
+        if type == URLType.FAKE:
+            insert_query = "INSERT INTO  manual_check (fake_url) VALUES (%s)"
+        elif type == URLType.REAL:
+            insert_query = "INSERT INTO  manual_check (real_url) VALUES (%s)"
+
+        cursor.execute(insert_query, (url,))
+
+        connection.commit()
+
+        cursor.close()
+        connection.close()
+
+        return {"message": "URL added successfully"}
+
+    except (Exception, Error) as error:
+        return {"message": f"Error adding URL: {error}"}

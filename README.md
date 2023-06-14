@@ -27,6 +27,10 @@ python -m venv phishing-venv
 ```bash
     uvicorn main:app --reload
 ```
+- or
+```bash
+    python3 -m uvicorn main:app --reload
+```
 
 # Web app setup
 

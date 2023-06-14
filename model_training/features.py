@@ -43,7 +43,7 @@ def url_features(url):
     except:
         url_ip = 0
     # Url Length
-    url_len = 1 if (len(url) > 54) else 0
+    url_len = 1 if (len(url) < 54) else 0
 
     # no of occurance of // > 1
     url_pos = 1 if (len(re.findall(r"\/\/", url)) > 1) else 0
