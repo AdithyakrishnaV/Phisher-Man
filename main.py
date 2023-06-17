@@ -6,6 +6,7 @@ from enum import Enum
 from fastapi import Query
 import psycopg2
 from psycopg2 import Error
+import urllib.parse
 
 app = FastAPI()
 
@@ -46,10 +47,13 @@ async def add_url(input: ReportInput, type: URLType = Query(..., description="Ty
     url: str = input.reportUrl
 
     try:
-        # Establish connection to PostgreSQL
+        #Extract the hostname from the URL
+        parsed_url = urllib.parse.urlparse(url)
+        host = parsed_url.hostname
+
         connection = psycopg2.connect(
             user="postgres",
-            password="<password>",
+            password="kurama",
             host="127.0.0.1",
             port="5432",
             database="postgres"
@@ -57,13 +61,19 @@ async def add_url(input: ReportInput, type: URLType = Query(..., description="Ty
 
         cursor = connection.cursor()
 
-        
-        if type == URLType.FAKE:
-            insert_query = "INSERT INTO  manual_check (fake_url) VALUES (%s)"
-        elif type == URLType.REAL:
-            insert_query = "INSERT INTO  manual_check (real_url) VALUES (%s)"
+        #Check if host exists
+        select_query = "SELECT host FROM manualcheck WHERE host = %s"
+        cursor.execute(select_query, (host,))
+        result = cursor.fetchone()
 
-        cursor.execute(insert_query, (url,))
+        if not result:
+           #if not insert in the table
+            if type == URLType.FAKE:
+                insert_query = "INSERT INTO manualcheck (host, url, fake) VALUES (%s, %s, 'True')"
+            elif type == URLType.REAL:
+                insert_query = "INSERT INTO manualcheck (host, url, fake) VALUES (%s, %s, 'False')"
+
+            cursor.execute(insert_query, (host, url))
 
         connection.commit()
 
