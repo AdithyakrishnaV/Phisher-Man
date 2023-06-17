@@ -53,7 +53,7 @@ async def add_url(input: ReportInput, type: URLType = Query(..., description="Ty
 
         connection = psycopg2.connect(
             user="postgres",
-            password="kurama",
+            password="<password>",
             host="127.0.0.1",
             port="5432",
             database="postgres"
