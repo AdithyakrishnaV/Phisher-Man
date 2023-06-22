@@ -53,7 +53,7 @@ python -m venv phishing-venv
 - Start postgres locally
 
 ```bash
-   psql -U postgres
+   psql -U <username>
 ```
 
 ```bash
