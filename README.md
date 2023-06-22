@@ -1,5 +1,6 @@
 # Phishing Detection
 WebApp to detect phishing websites based on machine learning methods
+Credts: <a href="https://github.com/v4zha"> Arvin </a>
 
 ### Phishing Detection API Setup
 - create venv using 
