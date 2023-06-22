@@ -49,3 +49,22 @@ python -m venv phishing-venv
 ```bash
     npm run dev
 ```
+
+- Start postgres locally
+
+```bash
+   psql -U postgres
+```
+
+```bash
+    CREATE TABLE manualcheck ( host VARCHAR(255),  url VARCHAR(255),  Fake BOOLEAN);
+```
+- In main.py  change this:
+```bash
+    user="<username>",
+    password="<password>",
+    host="127.0.0.1",
+    port="5432",
+    database="<database_name>"
+```
+  
